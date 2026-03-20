@@ -1,0 +1,42 @@
+services:
+  frontend:
+    image: node:24-alpine
+    working_dir: /workspace
+    command: sh -c "npm install && npm run dev:frontend"
+    ports:
+      - "${FRONTEND_PORT:-3000}:3000"
+    environment:
+      NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001}
+    volumes:
+      - ./:/workspace
+    depends_on:
+      - backend
+
+  backend:
+    image: node:24-alpine
+    working_dir: /workspace
+    command: sh -c "npm install && npm run dev:backend"
+    ports:
+      - "${BACKEND_PORT:-3001}:3001"
+    environment:
+      BACKEND_PORT: ${BACKEND_PORT:-3001}
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/todo_app}
+    volumes:
+      - ./:/workspace
+    depends_on:
+      - db
+
+  db:
+    image: postgres:18
+    restart: unless-stopped
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-todo_app}
+      POSTGRES_USER: ${POSTGRES_USER:-postgres}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+volumes:
+  postgres_data:

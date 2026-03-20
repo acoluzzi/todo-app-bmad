@@ -1,0 +1,66 @@
+# generated: 2026-03-20T12:01:39Z
+# last_updated: 2026-03-20T12:01:39Z
+# project: todo-app
+# project_key: NOKEY
+# tracking_system: file-system
+# story_location: /Users/andreacoluzzi/Projects/nearform/bmad/todo-app/_bmad-output/implementation-artifacts
+#
+# STATUS DEFINITIONS:
+# ==================
+# Epic Status:
+#   - backlog: Epic not yet started
+#   - in-progress: Epic actively being worked on
+#   - done: All stories in epic completed
+#
+# Epic Status Transitions:
+#   - backlog -> in-progress: Automatically when first story is created (via create-story)
+#   - in-progress -> done: Manually when all stories reach 'done' status
+#
+# Story Status:
+#   - backlog: Story only exists in epic file
+#   - ready-for-dev: Story file created in stories folder
+#   - in-progress: Developer actively working on implementation
+#   - review: Ready for code review (via Dev's code-review workflow)
+#   - done: Story completed
+#
+# Retrospective Status:
+#   - optional: Can be completed but not required
+#   - done: Retrospective has been completed
+#
+# WORKFLOW NOTES:
+# ===============
+# - Epic transitions to 'in-progress' automatically when first story is created
+# - Stories can be worked in parallel if team capacity allows
+# - SM typically creates next story after previous one is 'done' to incorporate learnings
+# - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
+
+generated: 2026-03-20T12:01:39Z
+last_updated: 2026-03-20T12:09:30Z
+project: todo-app
+project_key: NOKEY
+tracking_system: file-system
+story_location: /Users/andreacoluzzi/Projects/nearform/bmad/todo-app/_bmad-output/implementation-artifacts
+
+development_status:
+  epic-1: in-progress
+  1-1-set-up-initial-project-from-starter-template: review
+  1-2-implement-todo-data-model-and-persistence-layer: backlog
+  1-3-expose-todo-crud-api-endpoints: backlog
+  1-4-build-todo-list-ui-and-core-interactions: backlog
+  1-5-verify-persistence-across-refresh-and-reopen: backlog
+  epic-1-retrospective: optional
+
+  epic-2: backlog
+  2-1-implement-empty-loading-and-error-ui-states: backlog
+  2-2-add-fast-update-and-visual-completion-feedback: backlog
+  2-3-add-retry-safe-error-recovery-for-mutations: backlog
+  2-4-enforce-api-error-envelope-and-input-validation: backlog
+  epic-2-retrospective: optional
+
+  epic-3: backlog
+  3-1-apply-responsive-layout-across-supported-viewports: backlog
+  3-2-implement-accessibility-baseline-wcag-2-1-aa: backlog
+  3-3-establish-unit-and-integration-test-baseline: backlog
+  3-4-establish-e2e-and-local-orchestration-baseline: backlog
+  3-5-document-run-test-workflow-and-ci-quality-gates: backlog
+  epic-3-retrospective: optional
