@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-20T12:01:39Z
-last_updated: 2026-03-20T12:09:30Z
+last_updated: 2026-03-20T16:24:00Z
 project: todo-app
 project_key: NOKEY
 tracking_system: file-system
@@ -43,8 +43,8 @@ story_location: /Users/andreacoluzzi/Projects/nearform/bmad/todo-app/_bmad-outpu
 
 development_status:
   epic-1: in-progress
-  1-1-set-up-initial-project-from-starter-template: review
-  1-2-implement-todo-data-model-and-persistence-layer: backlog
+  1-1-set-up-initial-project-from-starter-template: done
+  1-2-implement-todo-data-model-and-persistence-layer: review
   1-3-expose-todo-crud-api-endpoints: backlog
   1-4-build-todo-list-ui-and-core-interactions: backlog
   1-5-verify-persistence-across-refresh-and-reopen: backlog

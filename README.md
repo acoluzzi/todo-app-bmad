@@ -33,6 +33,21 @@ This repository contains the Todo app with a strict frontend/backend split from 
 - Start backend:
   - `npm run dev:backend`
 
+## Persistence Workflow (Backend)
+
+- Generate Prisma client:
+  - `npm run prisma:generate`
+- Create and apply a local migration:
+  - `npm run prisma:migrate:dev -- --name init_todos`
+- Apply committed migrations (non-dev environments):
+  - `npm run prisma:migrate:deploy`
+- Run integration checks against a real PostgreSQL instance:
+  - `DATABASE_URL_TEST=postgresql://postgres:postgres@localhost:5432/todo_app npm run test:integration`
+
+`DATABASE_URL` host conventions:
+- Use `localhost` when running backend directly on your machine.
+- Use `db` hostname when backend runs inside Docker Compose.
+
 ## Docker Compose (Baseline)
 
 Run the baseline FE/BE/DB stack:
