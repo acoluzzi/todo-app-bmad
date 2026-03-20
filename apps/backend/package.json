@@ -11,6 +11,7 @@
     "test:watch": "vitest"
   },
   "dependencies": {
+    "dotenv": "^16.4.7",
     "fastify": "^5.6.1"
   },
   "devDependencies": {

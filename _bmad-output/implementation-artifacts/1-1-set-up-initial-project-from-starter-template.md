@@ -86,6 +86,8 @@ gpt-5.3-codex
 - Updated sprint status: `ready-for-dev -> in-progress` for `1-1-set-up-initial-project-from-starter-template`.
 - Frontend scaffolded with `create-next-app` under `apps/frontend` (TypeScript, ESLint, Tailwind, App Router, src-dir).
 - Monorepo workspace scripts validated via `npm run test`, `npm run lint`, and `npm run build`.
+- Applied code-review follow-up fixes for runtime hardening, Docker readiness, and monorepo documentation consistency.
+- Added frontend `test` and `test:watch` commands so workspace test execution includes frontend.
 
 ### Completion Notes List
 
@@ -97,6 +99,7 @@ gpt-5.3-codex
 - Added root `docker-compose.yml` and `.env.example` to establish FE/BE/DB local orchestration baseline.
 - Added root `README.md` with structure, startup commands, and architecture guardrails.
 - Verified acceptance criteria through successful lint/test/build commands.
+- Completed code-review remediation: sanitized production error messages, strict env parsing, Docker health checks, and frontend docs alignment.
 
 ### File List
 
@@ -114,6 +117,7 @@ gpt-5.3-codex
 - `apps/frontend/next-env.d.ts`
 - `apps/frontend/next.config.ts`
 - `apps/frontend/package.json`
+- `apps/frontend/README.md`
 - `apps/frontend/postcss.config.mjs`
 - `apps/frontend/public/file.svg`
 - `apps/frontend/public/globe.svg`
@@ -127,6 +131,7 @@ gpt-5.3-codex
 - `apps/frontend/tsconfig.json`
 - `apps/backend/package.json`
 - `apps/backend/tsconfig.json`
+- `apps/backend/vitest.config.js` (deleted)
 - `apps/backend/vitest.config.ts`
 - `apps/backend/src/app.ts`
 - `apps/backend/src/main.ts`
@@ -144,3 +149,4 @@ gpt-5.3-codex
 ## Change Log
 
 - 2026-03-20: Completed Story 1.1 implementation; scaffolded monorepo frontend/backend/shared baseline with Docker Compose/env/docs and validated with test/lint/build.
+- 2026-03-20: Applied Story 1.1 code-review fixes and added frontend test scripts for workspace-level test command consistency.

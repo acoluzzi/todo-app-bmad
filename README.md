@@ -13,10 +13,18 @@ This repository contains the Todo app with a strict frontend/backend split from 
 ## Getting Started
 
 1. Ensure Node.js `24.x` is installed.
-2. Copy environment variables:
+2. Copy environment variables for backend/local tooling:
    - `cp .env.example .env`
-3. Install workspace dependencies:
+3. (Optional) Add frontend app env file for local Next.js:
+   - `cp .env.example apps/frontend/.env.local`
+   - This lets Next.js read `NEXT_PUBLIC_API_BASE_URL` in `apps/frontend`.
+4. Install workspace dependencies:
    - `npm install`
+
+## Package Manager
+
+- This repository uses **npm** as the canonical package manager.
+- `pnpm-workspace.yaml` is present for compatibility only; use npm commands in docs and CI.
 
 ## Run Locally
 

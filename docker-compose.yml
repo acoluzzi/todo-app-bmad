@@ -2,10 +2,11 @@ services:
   frontend:
     image: node:24-alpine
     working_dir: /workspace
-    command: sh -c "npm install && npm run dev:frontend"
+    command: sh -c "npm install && npm run dev -w apps/frontend -- --port ${FRONTEND_PORT:-3000}"
     ports:
-      - "${FRONTEND_PORT:-3000}:3000"
+      - "${FRONTEND_PORT:-3000}:${FRONTEND_PORT:-3000}"
     environment:
+      FRONTEND_PORT: ${FRONTEND_PORT:-3000}
       NEXT_PUBLIC_API_BASE_URL: ${NEXT_PUBLIC_API_BASE_URL:-http://localhost:3001}
     volumes:
       - ./:/workspace
@@ -24,7 +25,8 @@ services:
     volumes:
       - ./:/workspace
     depends_on:
-      - db
+      db:
+        condition: service_healthy
 
   db:
     image: postgres:18
@@ -37,6 +39,11 @@ services:
       POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-postgres}
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-postgres} -d ${POSTGRES_DB:-todo_app}"]
+      interval: 5s
+      timeout: 5s
+      retries: 12
 
 volumes:
   postgres_data:

@@ -5,10 +5,11 @@ export const errorHandler = (
   _request: FastifyRequest,
   reply: FastifyReply
 ): void => {
+  const isProduction = process.env.NODE_ENV === "production";
   reply.status(500).send({
     error: {
       code: "INTERNAL_SERVER_ERROR",
-      message: error.message
+      message: isProduction ? "Internal server error" : error.message
     }
   });
 };
