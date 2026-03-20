@@ -1,0 +1,39 @@
+# OS / Editor
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment / secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies
+node_modules/
+
+# Build outputs
+dist/
+build/
+coverage/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# BMAD generated outputs
+_bmad-output/
+
+# Local AI/assistant tooling (not required for app runtime)
+.cursor/
+.claude/
+_bmad/
+
