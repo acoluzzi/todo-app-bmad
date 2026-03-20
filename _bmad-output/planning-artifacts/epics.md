@@ -1,5 +1,5 @@
 ---
-stepsCompleted: [1, 2, 3]
+stepsCompleted: [1, 2, 3, 4]
 inputDocuments:
   - '/Users/andreacoluzzi/Projects/nearform/bmad/todo-app/Product Requirement Document (PRD) for the Todo App.md'
   - '/Users/andreacoluzzi/Projects/nearform/bmad/todo-app/_bmad-output/planning-artifacts/architecture.md'
