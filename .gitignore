@@ -29,8 +29,7 @@ coverage/
 __pycache__/
 *.pyc
 
-# BMAD generated outputs
-_bmad-output/
+
 
 # Local AI/assistant tooling (not required for app runtime)
 .cursor/
