@@ -29,35 +29,23 @@ export function TodoApp() {
   const [mutationStatus, setMutationStatus] = useState<Record<string, AsyncStatus>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
+  const fetchTodos = async () => {
+    setListStatus("loading");
+    setErrorMessage(null);
+
+    try {
+      const nextTodos = await listTodos();
+      setTodos(nextTodos);
+      setListStatus("success");
+    } catch (error) {
+      setErrorMessage(getErrorMessage(error));
+      setListStatus("error");
+    }
+  };
+
   useEffect(() => {
-    let isActive = true;
-
-    const loadTodos = async () => {
-      setListStatus("loading");
-
-      try {
-        const nextTodos = await listTodos();
-        if (!isActive) {
-          return;
-        }
-
-        setTodos(nextTodos);
-        setListStatus("success");
-      } catch (error) {
-        if (!isActive) {
-          return;
-        }
-
-        setErrorMessage(getErrorMessage(error));
-        setListStatus("error");
-      }
-    };
-
-    void loadTodos();
-
-    return () => {
-      isActive = false;
-    };
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    void fetchTodos();
   }, []);
 
   const pendingTodoIds = useMemo(() => {
@@ -135,9 +123,17 @@ export function TodoApp() {
       <TodoForm onCreate={handleCreate} isSubmitting={createStatus === "loading"} />
 
       {errorMessage ? (
-        <p role="alert" aria-live="assertive" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
-          {errorMessage}
-        </p>
+        <div role="alert" aria-live="assertive" className="flex items-center justify-between gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3">
+          <p className="text-sm text-red-700">{errorMessage}</p>
+          <button
+            type="button"
+            onClick={() => setErrorMessage(null)}
+            className="shrink-0 rounded-lg px-2 py-1 text-sm font-medium text-red-600 transition hover:bg-red-100"
+            aria-label="Dismiss error"
+          >
+            Dismiss
+          </button>
+        </div>
       ) : null}
 
       {listStatus === "loading" ? (
@@ -159,7 +155,14 @@ export function TodoApp() {
       {listStatus === "error" ? (
         <div role="status" className="rounded-2xl border border-red-200 bg-red-50 px-6 py-8 text-center">
           <p className="text-base font-medium text-red-700">Failed to load todos</p>
-          <p className="mt-1 text-sm text-red-600">Please try refreshing the page.</p>
+          <p className="mt-1 text-sm text-red-600">Check your connection and try again.</p>
+          <button
+            type="button"
+            onClick={() => void fetchTodos()}
+            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+          >
+            Try again
+          </button>
         </div>
       ) : null}
 

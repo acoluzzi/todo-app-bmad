@@ -200,7 +200,8 @@ describe("TodoApp", () => {
     render(<TodoApp />);
 
     expect(await screen.findByText("Failed to load todos")).toBeInTheDocument();
-    expect(screen.getByText("Please try refreshing the page.")).toBeInTheDocument();
+    expect(screen.getByText("Check your connection and try again.")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
 
     expect(screen.getByRole("alert")).toBeInTheDocument();
     expect(screen.getByRole("status")).toBeInTheDocument();
@@ -208,6 +209,62 @@ describe("TodoApp", () => {
     expect(screen.getByText("Network error")).toBeInTheDocument();
 
     expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+  });
+
+  it("retries list fetch when clicking Try again after failure", async () => {
+    mockedListTodos.mockRejectedValueOnce(new Error("Network error"));
+    mockedListTodos.mockResolvedValueOnce(baseTodos);
+
+    render(<TodoApp />);
+
+    expect(await screen.findByText("Failed to load todos")).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Try again" })).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Try again" }));
+
+    expect(await screen.findByText("Write tests")).toBeInTheDocument();
+    expect(screen.queryByText("Failed to load todos")).not.toBeInTheDocument();
+    expect(mockedListTodos).toHaveBeenCalledTimes(2);
+  });
+
+  it("shows loading skeleton during retry fetch", async () => {
+    mockedListTodos.mockRejectedValueOnce(new Error("Network error"));
+
+    let resolveRetry!: (value: Todo[]) => void;
+    mockedListTodos.mockImplementationOnce(() => new Promise((resolve) => { resolveRetry = resolve; }));
+
+    render(<TodoApp />);
+
+    expect(await screen.findByText("Failed to load todos")).toBeInTheDocument();
+
+    await userEvent.click(screen.getByRole("button", { name: "Try again" }));
+
+    expect(screen.getByLabelText("Loading todos")).toBeInTheDocument();
+    expect(screen.queryByText("Failed to load todos")).not.toBeInTheDocument();
+
+    resolveRetry(baseTodos);
+
+    expect(await screen.findByText("Write tests")).toBeInTheDocument();
+  });
+
+  it("dismisses the error banner when clicking Dismiss", async () => {
+    mockedSetTodoCompleted.mockRejectedValue(
+      new apiClient.ApiClientError("Server error", "INTERNAL_ERROR", 500)
+    );
+
+    render(<TodoApp />);
+
+    await screen.findByText("Write tests");
+
+    await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Server error")).toBeInTheDocument();
+    });
+
+    await userEvent.click(screen.getByRole("button", { name: "Dismiss error" }));
+
+    expect(screen.queryByText("Server error")).not.toBeInTheDocument();
   });
 
   it("shows mutation loading state when toggling a todo", async () => {
