@@ -29,9 +29,9 @@ export function TodoItem({ todo, isMutating, onToggleCompleted, onDelete }: Todo
             todo.isCompleted ? "bg-emerald-500" : "bg-slate-300"
           }`}
         />
-        <div className="space-y-2">
+        <div className="min-w-0 space-y-2">
           <p
-            className={`text-base font-medium ${
+            className={`break-words text-base font-medium ${
               todo.isCompleted ? "text-slate-500 line-through" : "text-slate-900"
             }`}
           >
@@ -49,7 +49,7 @@ export function TodoItem({ todo, isMutating, onToggleCompleted, onDelete }: Todo
           type="button"
           onClick={() => onToggleCompleted(todo)}
           disabled={isMutating}
-          className="min-h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm font-medium text-slate-700 transition hover:bg-slate-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-slate-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {todo.isCompleted ? "Mark active" : "Mark complete"}
         </button>
@@ -57,7 +57,7 @@ export function TodoItem({ todo, isMutating, onToggleCompleted, onDelete }: Todo
           type="button"
           onClick={() => onDelete(todo.id)}
           disabled={isMutating}
-          className="min-h-10 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50 disabled:cursor-not-allowed disabled:opacity-60"
+          className="min-h-10 rounded-lg border border-red-200 px-3 py-2 text-sm font-medium text-red-700 transition hover:bg-red-50 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60"
         >
           Delete
         </button>

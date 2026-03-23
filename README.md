@@ -7,7 +7,7 @@ This repository contains the Todo app with a strict frontend/backend split from 
 - `apps/frontend`: Next.js app (UI only)
 - `apps/backend`: Fastify API service
 - `packages/shared`: Shared contracts, schemas, and utilities
-- `tests/e2e`: End-to-end tests (to be expanded in later stories)
+- `e2e`: Playwright end-to-end smoke tests
 - `_bmad-output`: Planning and implementation artifacts
 
 ## Getting Started
@@ -85,6 +85,53 @@ npm run test:integration -w apps/backend
 DATABASE_URL_TEST=postgresql://postgres:postgres@localhost:5432/todo_app_test \
   npm run test:integration -w apps/backend
 ```
+
+## Testing
+
+### Unit Tests
+
+```bash
+npm run test
+```
+
+Runs Vitest unit tests across all workspaces (frontend + backend + shared).
+
+### Integration Tests
+
+Requires a running PostgreSQL instance:
+
+```bash
+DATABASE_URL_TEST=postgresql://postgres:postgres@localhost:5432/todo_app_test \
+  npm run test:integration
+```
+
+### E2E Smoke Tests
+
+Requires the full stack running (via Docker Compose or manually):
+
+```bash
+# Install browsers (once)
+npx playwright install chromium
+
+# Run E2E tests
+npm run test:e2e
+```
+
+### Lint and Build
+
+```bash
+npm run lint
+npm run build
+```
+
+## CI Quality Gates
+
+The GitHub Actions CI workflow (`.github/workflows/ci.yml`) enforces:
+- Lint (ESLint)
+- Type checking (TypeScript build)
+- Unit tests (Vitest)
+
+CI runs on every push and pull request to `main`.
 
 ## Architecture Guardrails
 

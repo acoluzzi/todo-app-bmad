@@ -50,17 +50,17 @@ development_status:
   1-5-verify-persistence-across-refresh-and-reopen: done
   epic-1-retrospective: optional
 
-  epic-2: in-progress
+  epic-2: done
   2-1-implement-empty-loading-and-error-ui-states: done
   2-2-add-fast-update-and-visual-completion-feedback: done
   2-3-add-retry-safe-error-recovery-for-mutations: done
   2-4-enforce-api-error-envelope-and-input-validation: done
   epic-2-retrospective: optional
 
-  epic-3: backlog
-  3-1-apply-responsive-layout-across-supported-viewports: backlog
-  3-2-implement-accessibility-baseline-wcag-2-1-aa: backlog
-  3-3-establish-unit-and-integration-test-baseline: backlog
-  3-4-establish-e2e-and-local-orchestration-baseline: backlog
-  3-5-document-run-test-workflow-and-ci-quality-gates: backlog
+  epic-3: done
+  3-1-apply-responsive-layout-across-supported-viewports: done
+  3-2-implement-accessibility-baseline-wcag-2-1-aa: done
+  3-3-establish-unit-and-integration-test-baseline: done
+  3-4-establish-e2e-and-local-orchestration-baseline: done
+  3-5-document-run-test-workflow-and-ci-quality-gates: done
   epic-3-retrospective: optional

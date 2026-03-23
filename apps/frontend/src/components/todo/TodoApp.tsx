@@ -111,7 +111,7 @@ export function TodoApp() {
   };
 
   return (
-    <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
+    <main id="main-content" className="mx-auto flex w-full max-w-3xl flex-1 flex-col gap-8 px-4 py-10 sm:px-6 lg:px-8">
       <header className="space-y-2">
         <p className="text-sm font-medium uppercase tracking-[0.2em] text-slate-500">Todo App</p>
         <h1 className="text-3xl font-semibold tracking-tight text-slate-950">Manage your tasks</h1>
@@ -128,7 +128,7 @@ export function TodoApp() {
           <button
             type="button"
             onClick={() => setErrorMessage(null)}
-            className="shrink-0 rounded-lg px-2 py-1 text-sm font-medium text-red-600 transition hover:bg-red-100"
+            className="shrink-0 rounded-lg px-2 py-1 text-sm font-medium text-red-600 transition hover:bg-red-100 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
             aria-label="Dismiss error"
           >
             Dismiss
@@ -159,7 +159,7 @@ export function TodoApp() {
           <button
             type="button"
             onClick={() => void fetchTodos()}
-            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700"
+            className="mt-4 rounded-lg bg-red-600 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-red-500 focus-visible:ring-offset-2"
           >
             Try again
           </button>
@@ -174,6 +174,6 @@ export function TodoApp() {
           onDelete={handleDelete}
         />
       ) : null}
-    </section>
+    </main>
   );
 }
