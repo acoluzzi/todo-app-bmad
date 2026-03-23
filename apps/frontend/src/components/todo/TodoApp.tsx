@@ -84,30 +84,39 @@ export function TodoApp() {
   };
 
   const handleToggleCompleted = async (todo: Todo) => {
+    const previousTodos = todos;
     setMutationStatus((current) => ({ ...current, [todo.id]: "loading" }));
     setErrorMessage(null);
+
+    setTodos((currentTodos) =>
+      currentTodos.map((t) => (t.id === todo.id ? { ...t, isCompleted: !t.isCompleted } : t))
+    );
 
     try {
       const updatedTodo = await setTodoCompleted(todo.id, !todo.isCompleted);
       setTodos((currentTodos) =>
-        currentTodos.map((currentTodo) => (currentTodo.id === updatedTodo.id ? updatedTodo : currentTodo))
+        currentTodos.map((t) => (t.id === updatedTodo.id ? updatedTodo : t))
       );
       setMutationStatus((current) => ({ ...current, [todo.id]: "success" }));
     } catch (error) {
+      setTodos(previousTodos);
       setMutationStatus((current) => ({ ...current, [todo.id]: "error" }));
       setErrorMessage(getErrorMessage(error));
     }
   };
 
   const handleDelete = async (id: string) => {
+    const previousTodos = todos;
     setMutationStatus((current) => ({ ...current, [id]: "loading" }));
     setErrorMessage(null);
 
+    setTodos((currentTodos) => currentTodos.filter((todo) => todo.id !== id));
+
     try {
       await deleteTodo(id);
-      setTodos((currentTodos) => currentTodos.filter((todo) => todo.id !== id));
       setMutationStatus((current) => ({ ...current, [id]: "success" }));
     } catch (error) {
+      setTodos(previousTodos);
       setMutationStatus((current) => ({ ...current, [id]: "error" }));
       setErrorMessage(getErrorMessage(error));
     }

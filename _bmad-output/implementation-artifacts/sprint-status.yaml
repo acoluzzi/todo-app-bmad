@@ -35,7 +35,7 @@
 # - Dev moves story to 'review', then runs code-review (fresh context, different LLM recommended)
 
 generated: 2026-03-20T12:01:39Z
-last_updated: 2026-03-20T21:30:00Z
+last_updated: 2026-03-20T22:00:00Z
 project: todo-app
 project_key: NOKEY
 tracking_system: file-system
@@ -52,7 +52,7 @@ development_status:
 
   epic-2: in-progress
   2-1-implement-empty-loading-and-error-ui-states: done
-  2-2-add-fast-update-and-visual-completion-feedback: backlog
+  2-2-add-fast-update-and-visual-completion-feedback: done
   2-3-add-retry-safe-error-recovery-for-mutations: backlog
   2-4-enforce-api-error-envelope-and-input-validation: backlog
   epic-2-retrospective: optional

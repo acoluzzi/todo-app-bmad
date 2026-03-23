@@ -77,11 +77,32 @@ describe("TodoApp", () => {
     expect(mockedCreateTodo).toHaveBeenCalledWith("Review UI");
   });
 
-  it("toggles todo completion and updates the rendered state", async () => {
-    mockedSetTodoCompleted.mockResolvedValue({
-      ...baseTodos[0],
-      isCompleted: true
+  it("optimistically toggles todo completion before API responds", async () => {
+    let resolveToggle!: (value: Todo) => void;
+    mockedSetTodoCompleted.mockImplementation(() => new Promise((resolve) => { resolveToggle = resolve; }));
+
+    render(<TodoApp />);
+
+    await screen.findByText("Write tests");
+
+    await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
+
+    expect(screen.queryByRole("button", { name: "Mark complete" })).not.toBeInTheDocument();
+    expect(screen.getAllByRole("button", { name: "Mark active" })).toHaveLength(2);
+
+    resolveToggle({ ...baseTodos[0], isCompleted: true });
+
+    await waitFor(() => {
+      const items = screen.getAllByRole("listitem");
+      expect(items[0]).toHaveAttribute("aria-busy", "false");
     });
+    expect(mockedSetTodoCompleted).toHaveBeenCalledWith("todo-1", true);
+  });
+
+  it("reverts optimistic toggle on API failure", async () => {
+    mockedSetTodoCompleted.mockRejectedValue(
+      new apiClient.ApiClientError("Toggle failed", "INTERNAL_ERROR", 500)
+    );
 
     render(<TodoApp />);
 
@@ -90,14 +111,16 @@ describe("TodoApp", () => {
     await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
 
     await waitFor(() => {
-      expect(screen.queryByRole("button", { name: "Mark complete" })).not.toBeInTheDocument();
+      expect(screen.getByText("Toggle failed")).toBeInTheDocument();
     });
-    expect(screen.getAllByRole("button", { name: "Mark active" })).toHaveLength(2);
-    expect(mockedSetTodoCompleted).toHaveBeenCalledWith("todo-1", true);
+
+    expect(screen.getByRole("button", { name: "Mark complete" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Mark complete" })).not.toBeDisabled();
   });
 
-  it("deletes a todo and removes it from the rendered list", async () => {
-    mockedDeleteTodo.mockResolvedValue(undefined);
+  it("optimistically deletes a todo before API responds", async () => {
+    let resolveDelete!: (value: void) => void;
+    mockedDeleteTodo.mockImplementation(() => new Promise((resolve) => { resolveDelete = resolve; }));
 
     render(<TodoApp />);
 
@@ -106,10 +129,36 @@ describe("TodoApp", () => {
     const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
     await userEvent.click(deleteButtons[0]);
 
-    await waitFor(() => {
-      expect(screen.queryByText("Write tests")).not.toBeInTheDocument();
-    });
+    expect(screen.queryByText("Write tests")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+
+    resolveDelete();
+
     expect(mockedDeleteTodo).toHaveBeenCalledWith("todo-1");
+  });
+
+  it("reverts optimistic delete on API failure", async () => {
+    let rejectDelete!: (error: Error) => void;
+    mockedDeleteTodo.mockImplementation(() => new Promise((_resolve, reject) => { rejectDelete = reject; }));
+
+    render(<TodoApp />);
+
+    await screen.findByText("Write tests");
+
+    const deleteButtons = screen.getAllByRole("button", { name: "Delete" });
+    await userEvent.click(deleteButtons[0]);
+
+    expect(screen.queryByText("Write tests")).not.toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(1);
+
+    rejectDelete(new apiClient.ApiClientError("Delete failed", "INTERNAL_ERROR", 500));
+
+    await waitFor(() => {
+      expect(screen.getByText("Delete failed")).toBeInTheDocument();
+    });
+
+    expect(screen.getByText("Write tests")).toBeInTheDocument();
+    expect(screen.getAllByRole("listitem")).toHaveLength(2);
   });
 
   it("shows empty state when the API returns no todos", async () => {
@@ -174,37 +223,12 @@ describe("TodoApp", () => {
     const items = screen.getAllByRole("listitem");
     expect(items[0]).toHaveAttribute("aria-busy", "true");
 
-    const toggleButtons = screen.getAllByRole("button", { name: "Mark complete" });
-    for (const button of toggleButtons) {
-      expect(button).toBeDisabled();
-    }
+    expect(screen.getAllByRole("button", { name: "Mark active" })).toHaveLength(2);
 
     resolveToggle({ ...baseTodos[0], isCompleted: true });
 
     await waitFor(() => {
       expect(items[0]).toHaveAttribute("aria-busy", "false");
     });
-  });
-
-  it("shows error message on mutation failure and keeps item in pre-mutation state", async () => {
-    mockedSetTodoCompleted.mockRejectedValue(
-      new apiClient.ApiClientError("Server error", "INTERNAL_ERROR", 500)
-    );
-
-    render(<TodoApp />);
-
-    await screen.findByText("Write tests");
-
-    await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
-
-    await waitFor(() => {
-      expect(screen.getByText("Server error")).toBeInTheDocument();
-    });
-
-    expect(screen.getByRole("button", { name: "Mark complete" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Mark complete" })).not.toBeDisabled();
-
-    const items = screen.getAllByRole("listitem");
-    expect(items[0]).toHaveAttribute("aria-busy", "false");
   });
 });
