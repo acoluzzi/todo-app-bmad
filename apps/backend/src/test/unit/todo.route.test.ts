@@ -123,6 +123,16 @@ describe("Todo CRUD routes", () => {
       expect(response.json().error.code).toBe("VALIDATION_ERROR");
     });
 
+    it("returns 400 when body is missing entirely", async () => {
+      const response = await app.inject({
+        method: "POST",
+        url: "/api/v1/todos"
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().error.code).toBe("VALIDATION_ERROR");
+    });
+
     it("returns 400 validation error when body contains malformed JSON", async () => {
       const response = await app.inject({
         method: "POST",
@@ -205,6 +215,28 @@ describe("Todo CRUD routes", () => {
       expect(response.json().error.code).toBe("TODO_NOT_FOUND");
     });
 
+    it("returns 400 when body is empty object", async () => {
+      const response = await app.inject({
+        method: "PATCH",
+        url: `/api/v1/todos/${VALID_UUID}`,
+        payload: {}
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().error.code).toBe("VALIDATION_ERROR");
+    });
+
+    it("returns 400 when is_completed is null", async () => {
+      const response = await app.inject({
+        method: "PATCH",
+        url: `/api/v1/todos/${VALID_UUID}`,
+        payload: { is_completed: null }
+      });
+
+      expect(response.statusCode).toBe(400);
+      expect(response.json().error.code).toBe("VALIDATION_ERROR");
+    });
+
     it("returns 400 when is_completed is not a boolean", async () => {
       const response = await app.inject({
         method: "PATCH",
@@ -276,6 +308,44 @@ describe("Todo CRUD routes", () => {
 
       expect(response.statusCode).toBe(500);
       expect(response.json().error.code).toBe("INTERNAL_SERVER_ERROR");
+    });
+  });
+
+  describe("error envelope consistency", () => {
+    const errorEnvelopeShape = (body: Record<string, unknown>) => {
+      expect(body).toHaveProperty("error");
+      const envelope = body.error as Record<string, unknown>;
+      expect(envelope).toHaveProperty("code");
+      expect(envelope).toHaveProperty("message");
+      expect(typeof envelope.code).toBe("string");
+      expect(typeof envelope.message).toBe("string");
+    };
+
+    it("returns consistent envelope for validation, not-found, and server errors", async () => {
+      const validationRes = await app.inject({
+        method: "POST",
+        url: "/api/v1/todos",
+        payload: { description: "" }
+      });
+      expect(validationRes.statusCode).toBe(400);
+      errorEnvelopeShape(validationRes.json());
+
+      mockService.setCompleted.mockRejectedValue(new TodoNotFoundError(UNKNOWN_UUID));
+      const notFoundRes = await app.inject({
+        method: "PATCH",
+        url: `/api/v1/todos/${UNKNOWN_UUID}`,
+        payload: { is_completed: true }
+      });
+      expect(notFoundRes.statusCode).toBe(404);
+      errorEnvelopeShape(notFoundRes.json());
+
+      mockService.list.mockRejectedValue(new Error("DB down"));
+      const serverRes = await app.inject({
+        method: "GET",
+        url: "/api/v1/todos"
+      });
+      expect(serverRes.statusCode).toBe(500);
+      errorEnvelopeShape(serverRes.json());
     });
   });
 });

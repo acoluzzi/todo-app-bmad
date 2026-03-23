@@ -17,6 +17,8 @@
     "prisma:migrate:deploy": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/todo_app} prisma migrate deploy"
   },
   "dependencies": {
+    "@fastify/cors": "^11.2.0",
+    "@fastify/helmet": "^13.0.2",
     "@prisma/adapter-pg": "^7.5.0",
     "@prisma/client": "^7.5.0",
     "dotenv": "^16.4.7",
