@@ -59,6 +59,33 @@ Services:
 - Backend health: `http://localhost:3001/api/v1/health`
 - Postgres: `localhost:5432`
 
+## Verify Persistence (Manual)
+
+To verify that todos persist across a page refresh using the full stack:
+
+1. Start the full stack:
+   - `docker compose up --build`
+2. Open the frontend at `http://localhost:3000`.
+3. Create one or more todos using the form.
+4. Refresh the browser page (Cmd+R / Ctrl+R).
+5. Confirm all previously created todos are still visible in the list.
+6. Toggle a todo's completion state and refresh again — confirm the state persists.
+7. Delete a todo and refresh — confirm it is no longer in the list.
+
+To run the automated backend integration tests against a local PostgreSQL:
+
+```bash
+# Create the test database (once, with Docker Compose DB running):
+docker compose exec db psql -U postgres -c "CREATE DATABASE todo_app_test"
+
+# Run integration tests:
+npm run test:integration -w apps/backend
+
+# Or with a custom test database URL:
+DATABASE_URL_TEST=postgresql://postgres:postgres@localhost:5432/todo_app_test \
+  npm run test:integration -w apps/backend
+```
+
 ## Architecture Guardrails
 
 - Do not place backend business logic inside `apps/frontend`.

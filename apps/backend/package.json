@@ -11,7 +11,7 @@
     "pretest": "npm run prisma:generate",
     "test": "vitest run",
     "test:watch": "vitest",
-    "test:integration": "vitest run src/test/integration/**/*.test.ts",
+    "test:integration": "DATABASE_URL_TEST=${DATABASE_URL_TEST:-postgresql://postgres:postgres@localhost:5432/todo_app_test} vitest run --fileParallelism false src/test/integration/**/*.test.ts",
     "prisma:generate": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/todo_app} prisma generate",
     "prisma:migrate:dev": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/todo_app} prisma migrate dev",
     "prisma:migrate:deploy": "DATABASE_URL=${DATABASE_URL:-postgresql://postgres:postgres@localhost:5432/todo_app} prisma migrate deploy"
