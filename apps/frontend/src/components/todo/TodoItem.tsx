@@ -16,7 +16,12 @@ const dateFormatter = new Intl.DateTimeFormat("en", {
 
 export function TodoItem({ todo, isMutating, onToggleCompleted, onDelete }: TodoItemProps) {
   return (
-    <li className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-start sm:justify-between">
+    <li
+      aria-busy={isMutating}
+      className={`flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm transition-opacity sm:flex-row sm:items-start sm:justify-between ${
+        isMutating ? "opacity-60" : ""
+      }`}
+    >
       <div className="flex items-start gap-3">
         <span
           aria-label={`Completion state: ${todo.isCompleted ? "completed" : "active"}`}

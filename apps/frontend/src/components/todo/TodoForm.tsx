@@ -55,7 +55,7 @@ export function TodoForm({ onCreate, isSubmitting }: TodoFormProps) {
           {isSubmitting ? "Adding..." : "Add todo"}
         </button>
       </div>
-      {errorMessage ? <p className="text-sm text-red-600">{errorMessage}</p> : null}
+      {errorMessage ? <p role="alert" className="text-sm text-red-600">{errorMessage}</p> : null}
     </form>
   );
 }

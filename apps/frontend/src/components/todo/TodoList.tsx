@@ -17,8 +17,17 @@ export function TodoList({
   onToggleCompleted,
   onDelete
 }: TodoListProps) {
+  if (todos.length === 0) {
+    return (
+      <div role="status" className="rounded-2xl border border-dashed border-slate-300 px-6 py-12 text-center">
+        <p className="text-base font-medium text-slate-500">No todos yet</p>
+        <p className="mt-1 text-sm text-slate-400">Add one above to get started!</p>
+      </div>
+    );
+  }
+
   return (
-    <ul className="space-y-3">
+    <ul className="space-y-3" aria-live="polite">
       {todos.map((todo) => (
         <TodoItem
           key={todo.id}

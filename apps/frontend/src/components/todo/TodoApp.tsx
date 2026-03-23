@@ -24,7 +24,7 @@ const getErrorMessage = (error: unknown): string => {
 
 export function TodoApp() {
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [listStatus, setListStatus] = useState<AsyncStatus>("idle");
+  const [listStatus, setListStatus] = useState<AsyncStatus>("loading");
   const [createStatus, setCreateStatus] = useState<AsyncStatus>("idle");
   const [mutationStatus, setMutationStatus] = useState<Record<string, AsyncStatus>>({});
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -74,6 +74,7 @@ export function TodoApp() {
       const createdTodo = await createTodo(description);
       setTodos((currentTodos) => [createdTodo, ...currentTodos]);
       setCreateStatus("success");
+      setListStatus("success");
       return true;
     } catch (error) {
       setCreateStatus("error");
@@ -125,14 +126,35 @@ export function TodoApp() {
       <TodoForm onCreate={handleCreate} isSubmitting={createStatus === "loading"} />
 
       {errorMessage ? (
-        <p className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">{errorMessage}</p>
+        <p role="alert" aria-live="assertive" className="rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {errorMessage}
+        </p>
       ) : null}
 
       {listStatus === "loading" ? (
-        <p className="text-sm text-slate-500">Loading todos...</p>
+        <div aria-busy="true" aria-label="Loading todos" className="space-y-3">
+          {[1, 2, 3].map((i) => (
+            <div key={i} className="animate-pulse rounded-2xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex items-start gap-3">
+                <div className="mt-1 h-3.5 w-3.5 rounded-full bg-slate-200" />
+                <div className="flex-1 space-y-3">
+                  <div className="h-4 w-3/4 rounded bg-slate-200" />
+                  <div className="h-3 w-1/3 rounded bg-slate-100" />
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       ) : null}
 
-      {listStatus !== "loading" ? (
+      {listStatus === "error" ? (
+        <div role="status" className="rounded-2xl border border-red-200 bg-red-50 px-6 py-8 text-center">
+          <p className="text-base font-medium text-red-700">Failed to load todos</p>
+          <p className="mt-1 text-sm text-red-600">Please try refreshing the page.</p>
+        </div>
+      ) : null}
+
+      {listStatus === "success" ? (
         <TodoList
           todos={todos}
           pendingTodoIds={pendingTodoIds}

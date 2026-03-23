@@ -111,4 +111,100 @@ describe("TodoApp", () => {
     });
     expect(mockedDeleteTodo).toHaveBeenCalledWith("todo-1");
   });
+
+  it("shows empty state when the API returns no todos", async () => {
+    mockedListTodos.mockResolvedValue([]);
+
+    render(<TodoApp />);
+
+    expect(await screen.findByText("No todos yet")).toBeInTheDocument();
+    expect(screen.getByText("Add one above to get started!")).toBeInTheDocument();
+
+    const statusContainer = screen.getByRole("status");
+    expect(statusContainer).toBeInTheDocument();
+
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+  });
+
+  it("shows loading skeleton before the initial fetch resolves", async () => {
+    let resolveList!: (value: Todo[]) => void;
+    mockedListTodos.mockImplementation(() => new Promise((resolve) => { resolveList = resolve; }));
+
+    render(<TodoApp />);
+
+    const loadingRegion = screen.getByLabelText("Loading todos");
+    expect(loadingRegion).toBeInTheDocument();
+    expect(loadingRegion).toHaveAttribute("aria-busy", "true");
+
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+    expect(screen.queryByRole("status")).not.toBeInTheDocument();
+
+    resolveList(baseTodos);
+
+    await screen.findByText("Write tests");
+    expect(screen.queryByLabelText("Loading todos")).not.toBeInTheDocument();
+  });
+
+  it("shows error state when the initial fetch fails", async () => {
+    mockedListTodos.mockRejectedValue(new Error("Network error"));
+
+    render(<TodoApp />);
+
+    expect(await screen.findByText("Failed to load todos")).toBeInTheDocument();
+    expect(screen.getByText("Please try refreshing the page.")).toBeInTheDocument();
+
+    expect(screen.getByRole("alert")).toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+
+    expect(screen.getByText("Network error")).toBeInTheDocument();
+
+    expect(screen.queryByRole("listitem")).not.toBeInTheDocument();
+  });
+
+  it("shows mutation loading state when toggling a todo", async () => {
+    let resolveToggle!: (value: Todo) => void;
+    mockedSetTodoCompleted.mockImplementation(() => new Promise((resolve) => { resolveToggle = resolve; }));
+
+    render(<TodoApp />);
+
+    await screen.findByText("Write tests");
+
+    await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
+
+    const items = screen.getAllByRole("listitem");
+    expect(items[0]).toHaveAttribute("aria-busy", "true");
+
+    const toggleButtons = screen.getAllByRole("button", { name: "Mark complete" });
+    for (const button of toggleButtons) {
+      expect(button).toBeDisabled();
+    }
+
+    resolveToggle({ ...baseTodos[0], isCompleted: true });
+
+    await waitFor(() => {
+      expect(items[0]).toHaveAttribute("aria-busy", "false");
+    });
+  });
+
+  it("shows error message on mutation failure and keeps item in pre-mutation state", async () => {
+    mockedSetTodoCompleted.mockRejectedValue(
+      new apiClient.ApiClientError("Server error", "INTERNAL_ERROR", 500)
+    );
+
+    render(<TodoApp />);
+
+    await screen.findByText("Write tests");
+
+    await userEvent.click(screen.getByRole("button", { name: "Mark complete" }));
+
+    await waitFor(() => {
+      expect(screen.getByText("Server error")).toBeInTheDocument();
+    });
+
+    expect(screen.getByRole("button", { name: "Mark complete" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Mark complete" })).not.toBeDisabled();
+
+    const items = screen.getAllByRole("listitem");
+    expect(items[0]).toHaveAttribute("aria-busy", "false");
+  });
 });
