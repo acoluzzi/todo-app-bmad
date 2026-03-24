@@ -24,6 +24,7 @@ export function TodoItem({ todo, isMutating, onToggleCompleted, onDelete }: Todo
     >
       <div className="flex items-start gap-3">
         <span
+          role="img"
           aria-label={`Completion state: ${todo.isCompleted ? "completed" : "active"}`}
           className={`mt-1 inline-flex h-3.5 w-3.5 rounded-full ${
             todo.isCompleted ? "bg-emerald-500" : "bg-slate-300"
